@@ -87,7 +87,7 @@ struct WriteReviewView: View {
                         HStack {
                             Text("Rating")
                                 .foregroundColor(.seconderyText)
-                                .fonst(.system(size: 18, weight: .medium))
+                                .font(.system(size: 18, weight: .medium))
                             
                             Spacer()
                             
