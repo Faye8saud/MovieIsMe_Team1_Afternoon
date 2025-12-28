@@ -9,9 +9,18 @@ import SwiftUI
 
 @main
 struct MovieIsMe_Team1_AfternoonApp: App {
+    @StateObject var userViewModel = UserViewModel()
+    init() {
+            UIPageControl.appearance().currentPageIndicatorTintColor = .white
+            UIPageControl.appearance().pageIndicatorTintColor =
+                UIColor.white.withAlphaComponent(0.4)
+        }
+
     var body: some Scene {
+        
         WindowGroup {
-            ContentView()
+            SignInView()
+                .environmentObject(userViewModel)
         }
     }
 }
