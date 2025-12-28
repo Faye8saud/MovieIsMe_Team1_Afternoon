@@ -11,10 +11,10 @@ import Combine
 @MainActor
 
 enum APIConstants {
-    static let baseURL = "https://api.airtable.com/v0"
-    static let baseID = "appsfcB6YESLj4NCN"
-    static let tableName = "users"
-    static let apiKey = "pat7E88yW3dgzlY61.2b7d03863aca9f1262dcb772f7728bd157e695799b43c7392d5faf4f52fcb001"
+    static let baseURL = ""
+    static let baseID = ""
+    static let tableName = ""
+    static let apiKey = ""
 }
 
 import Foundation
