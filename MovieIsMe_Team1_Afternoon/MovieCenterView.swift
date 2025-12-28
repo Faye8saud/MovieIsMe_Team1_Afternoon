@@ -10,8 +10,10 @@ import SwiftUI
 
 
 struct MovieCenterView: View {
+    @EnvironmentObject var userViewModel: UserViewModel
     @State private var searchText = ""
-    
+    @State private var navigateToProfile = false
+
     @StateObject private var vm = MovieViewModel()
     
     let dramaMovies = [
@@ -44,6 +46,7 @@ struct MovieCenterView: View {
                             
                             Button {
                                 // profile action
+                                navigateToProfile = true
                             } label: {
                                 Image("userIcon1")
                                     .resizable()
@@ -56,6 +59,14 @@ struct MovieCenterView: View {
                         }
                         .padding(.horizontal)
                         .padding(.top, 10)
+                        
+                        NavigationLink(
+                               destination: ProfileView()
+                                   .environmentObject(userViewModel), // pass ViewModel
+                               isActive: $navigateToProfile
+                           ) {
+                               EmptyView()
+                           }
                         
                         // Search field
                         HStack(spacing: 12) {
@@ -110,4 +121,5 @@ struct MovieCenterView: View {
 
 #Preview {
     MovieCenterView()
+        .environmentObject(UserViewModel())
 }

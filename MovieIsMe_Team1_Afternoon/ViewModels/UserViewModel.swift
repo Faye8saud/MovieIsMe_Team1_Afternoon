@@ -11,10 +11,10 @@ import Combine
 @MainActor
 
 enum APIConstants {
-    static let baseURL = ""
-    static let baseID = ""
-    static let tableName = ""
-    static let apiKey = ""
+    static let baseURL = "https://api.airtable.com/v0"
+    static let baseID = "appsfcB6YESLj4NCN"
+    static let tableName = "users"
+    static let apiKey = "pat7E88yW3dgzlY61.2b7d03863aca9f1262dcb772f7728bd157e695799b43c7392d5faf4f52fcb001"
 }
 
 import Foundation
@@ -80,14 +80,14 @@ class UserViewModel: ObservableObject {
         let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         let trimmedPassword = password.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        guard let record = users.first(where: {
-            $0.fields.email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == trimmedEmail
+        guard let record = users.first(where: {$0.fields.email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == trimmedEmail
         }) else {
             errorMessage = "Email not found"
             return false
         }
 
         if record.fields.password == trimmedPassword {
+            SessionManager.saveUserID(record.id) //saves userID
             currentUser = record
             print("✅ Signed in:", record.fields.name)
             return true
@@ -155,6 +155,11 @@ class UserViewModel: ObservableObject {
                 print("❌ Failed to update user:", error)
             }
         }
+    }
+    
+    func signOut() {
+        currentUser = nil
+        SessionManager.clear()
     }
 
 }

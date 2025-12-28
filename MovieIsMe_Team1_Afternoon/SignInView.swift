@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct SignInView: View {
-    @StateObject var viewModel = UserViewModel()
+    @EnvironmentObject var userViewModel: UserViewModel
+    //@StateObject var viewModel = UserViewModel()
     @State private var email = ""
     @State private var password = ""
     @State private var signedIn = false
@@ -80,7 +81,8 @@ struct SignInView: View {
                         .cornerRadius(8)
                     
                     Button {
-                        signedIn = viewModel.signIn(email: email, password: password)
+                        signedIn = userViewModel.signIn(email: email, password: password)
+
                     } label: {
                         Text("Sign in")
                             .font(.headline)
@@ -105,20 +107,22 @@ struct SignInView: View {
                         
                     }
                     .padding(.top, 10)
-                    if let error = viewModel.errorMessage {
-                        Text(error).foregroundColor(.red)
-                    }
+//                    if let error = userViewModel.errorMessage {
+//                        Text(error).foregroundColor(.red)
+//                    }
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 50)
             }
             .navigationDestination(isPresented: $signedIn) {
-                    MovieCenterView()
-                }
+                MovieCenterView()
+                    .environmentObject(userViewModel)
+            }
         }
           }
 }
 
 #Preview {
     SignInView()
+        .environmentObject(UserViewModel())
 }

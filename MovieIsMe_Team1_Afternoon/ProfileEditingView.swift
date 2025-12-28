@@ -2,16 +2,15 @@ import SwiftUI
 
 struct ProfileEditingView: View {
 
+    @EnvironmentObject var userViewModel: UserViewModel
+
     // MARK: - Navigation
     @State private var navigateToProfile = false
 
     // MARK: - State
     @State private var isEditing = false
-
-    @State private var firstName = "Sarah"
-    @State private var lastName = "Abdullah"
-
-    // Draft values (used only while editing)
+    @State private var signedOut = false
+    
     @State private var draftFirstName = ""
     @State private var draftLastName = ""
 
@@ -28,10 +27,20 @@ struct ProfileEditingView: View {
                 if !isEditing {
                     signOutButton
                 }
+                NavigationLink(
+                    destination: SignInView()
+                        .environmentObject(userViewModel)
+                        .navigationBarBackButtonHidden(true),
+                        isActive: $signedOut
+                    ) {
+                            EmptyView()
+                    }
 
                 // Hidden navigation trigger
                 NavigationLink(
-                    destination: ProfileView(),
+                    destination: ProfileView()
+                        .environmentObject(userViewModel)
+                        .navigationBarBackButtonHidden(true),
                     isActive: $navigateToProfile
                 ) {
                     EmptyView()
@@ -40,6 +49,14 @@ struct ProfileEditingView: View {
             .background(Color.black.ignoresSafeArea())
             .preferredColorScheme(.dark)
         }
+        .onAppear {
+            if let user = userViewModel.currentUser?.fields {
+                let nameParts = user.name.split(separator: " ", maxSplits: 1).map(String.init)
+                draftFirstName = nameParts.first ?? ""
+                draftLastName = nameParts.count > 1 ? nameParts[1] : ""
+            }
+        }
+
     }
 }
 
@@ -62,7 +79,7 @@ extension ProfileEditingView {
                     Image(systemName: "chevron.left")
                     Text("Back")
                 }
-                .foregroundColor(.yellow)
+                .foregroundColor(.yellowAccent)
             }
 
             Spacer()
@@ -76,18 +93,20 @@ extension ProfileEditingView {
             Button {
                 if isEditing {
                     // ✅ Save changes
-                    firstName = draftFirstName
-                    lastName = draftLastName
-                    isEditing = false
+                    userViewModel.updateProfile(
+                            firstName: draftFirstName,
+                            lastName: draftLastName
+                        )
+                        isEditing = false
                 } else {
                     // Enter edit mode
-                    draftFirstName = firstName
-                    draftLastName = lastName
+//                    draftFirstName = firstName
+//                    draftLastName = lastName
                     isEditing = true
                 }
             } label: {
                 Text(isEditing ? "Save" : "Edit")
-                    .foregroundColor(.yellow)
+                    .foregroundColor(.yellowAccent)
             }
         }
         .padding()
@@ -104,11 +123,20 @@ extension ProfileEditingView {
                 .fill(Color.gray.opacity(0.3))
                 .frame(width: 96, height: 96)
 
-            Image(systemName: "person.crop.circle.fill")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 90, height: 90)
-                .foregroundColor(.gray)
+            AsyncImage(
+                url: URL(string: userViewModel.currentUser?.fields.profile_image ?? "")
+            ) { image in
+                image.resizable().scaledToFill()
+            } placeholder: {
+                Color.gray.opacity(0.3)
+            }
+            .frame(width: 96, height: 96)
+            .clipShape(Circle())
+
+//                .resizable()
+//                .scaledToFit()
+//                .frame(width: 90, height: 90)
+//                .foregroundColor(.gray)
 
             if isEditing {
                 Circle()
@@ -117,7 +145,7 @@ extension ProfileEditingView {
 
                 Image(systemName: "camera")
                     .font(.system(size: 22))
-                    .foregroundColor(.yellow)
+                    .foregroundColor(.yellowAccent)
             }
         }
         .padding(.top, 24)
@@ -127,20 +155,15 @@ extension ProfileEditingView {
     // MARK: Profile Fields
     private var profileFields: some View {
         VStack(spacing: 0) {
-            profileRow(
-                title: "First name",
-                text: isEditing ? $draftFirstName : $firstName
-            )
+            profileRow(title: "First name", text: $draftFirstName)
+
 
             Rectangle()
                 .fill(Color.white.opacity(0.3))
                 .frame(height: 1)
                 .padding(.horizontal, 8)
 
-            profileRow(
-                title: "Last name",
-                text: isEditing ? $draftLastName : $lastName
-            )
+            profileRow(title: "Last name", text: $draftLastName)
         }
         .background(Color(white: 0.15))
         .cornerRadius(8)
@@ -151,6 +174,9 @@ extension ProfileEditingView {
     private var signOutButton: some View {
         Button {
             // sign out action
+            signedOut = true
+            userViewModel.signOut()
+            
         } label: {
             Text("Sign Out")
                 .foregroundColor(.red)
@@ -201,4 +227,5 @@ extension ProfileEditingView {
 // MARK: - Preview
 #Preview {
     ProfileEditingView()
+        .environmentObject(UserViewModel())
 }

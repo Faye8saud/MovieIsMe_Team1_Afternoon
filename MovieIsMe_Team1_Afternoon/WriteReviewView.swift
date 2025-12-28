@@ -25,7 +25,7 @@ struct WriteReviewView: View {
                         Image(systemName: "chevron.left")
                         Text("Back")
                     }
-                    .foregroundColor(.yellow)
+                    .foregroundColor(.yellowAccent)
                 }
 
                 Spacer()
@@ -40,7 +40,7 @@ struct WriteReviewView: View {
                     // Add review action
                 } label: {
                     Text("Add")
-                        .foregroundColor(.yellow)
+                        .foregroundColor(.yellowAccent)
                 }
             }
             .padding()
@@ -98,7 +98,7 @@ struct WriteReviewView: View {
                                     } label: {
                                         Image(systemName: star <= rating ? "star.fill" : "star")
                                             .font(.system(size: 21))
-                                            .foregroundColor(.yellow)
+                                            .foregroundColor(.yellowAccent)
                                     }
                                 }
                             }

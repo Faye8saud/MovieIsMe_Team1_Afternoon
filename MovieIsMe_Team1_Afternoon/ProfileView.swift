@@ -1,13 +1,15 @@
 import SwiftUI
 //movie posters
 struct ProfileView: View {
+@EnvironmentObject var userViewModel: UserViewModel
+
 //    let movies = [
 //        "poster1",
 //        "poster2",
 //        "poster3"
 //    ]
     let movies: [String] = []
-
+@State private var backButton = false
     var body: some View {
         NavigationStack{
             ScrollView {
@@ -17,12 +19,13 @@ struct ProfileView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Button {
                             // back action
+                            backButton = true
                         } label: {
                             HStack(spacing: 4) {
                                 Image(systemName: "chevron.left")
                                 Text("Back")
                             }
-                            .foregroundColor(.yellow)
+                            .foregroundColor(.yellowAccent)
                         }
                         
                         Text("Profile")
@@ -30,22 +33,35 @@ struct ProfileView: View {
                             .fontWeight(.heavy)
                             .foregroundColor(.white)
                     }
+                    NavigationLink(destination: MovieCenterView()
+                        .environmentObject(userViewModel)
+                        .navigationBarBackButtonHidden(true),
+                        isActive: $backButton
+                    ) {}
                     
                     HStack(spacing: 16) {
-                        Image(systemName: "person.crop.circle.fill")//will replace latter with the profile pic
-                            .resizable()
-                            .frame(width: 56, height: 56)
-                            .foregroundColor(.gray)
+                        AsyncImage(
+                            url: URL(string: userViewModel.currentUser?.fields.profile_image ?? "")
+                        ) { image in
+                            image
+                                .resizable()
+                                .scaledToFill()
+                        } placeholder: {
+                            Color.gray.opacity(0.3)
+                        }
+                        .frame(width: 56, height: 56)
+                        .clipShape(Circle())
+
                         
                         //user name and email
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Sarah Abdullah")
+                            Text(userViewModel.currentUser?.fields.name ?? "")
                                 .font(.system(size: 18))
                                 .foregroundColor(.white)
                                 .fontWeight(.medium)
                             //.offset(y:-10)
                             
-                            Text("Xxxx234@gmail.com")
+                            Text(userViewModel.currentUser?.fields.email ?? "")
                                 .foregroundStyle(.gray)
                                 .font(.system(size: 12))
                                 //.foregroundColor(.gray)
@@ -55,6 +71,7 @@ struct ProfileView: View {
                         
                         NavigationLink {
                             ProfileEditingView()
+                            .environmentObject(userViewModel)
                             .navigationBarBackButtonHidden(true)
 
                         } label: {
@@ -132,4 +149,5 @@ struct ProfileView: View {
 
 #Preview {
     ProfileView()
+        .environmentObject(UserViewModel())
 }
