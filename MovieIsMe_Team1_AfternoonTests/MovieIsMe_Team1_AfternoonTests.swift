@@ -4,14 +4,14 @@
 //
 //  Created by Fay  on 23/12/2025.
 //
-
-import Testing
-@testable import MovieIsMe_Team1_Afternoon
-
-struct MovieIsMe_Team1_AfternoonTests {
-
-    @Test func example() async throws {
-        // Write your test here and use APIs like `#expect(...)` to check expected conditions.
-    }
-
-}
+//
+//import XCTest
+//@testable import MovieIsMe_Team1_Afternoon
+//
+//final class MovieIsMe_Team1_AfternoonTests: XCTestCase {
+//
+//    func testExample() throws {
+//        let value = 2 + 2
+//        XCTAssertEqual(value, 4)
+//    }
+//}
